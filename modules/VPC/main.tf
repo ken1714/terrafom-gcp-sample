@@ -2,6 +2,9 @@ resource "google_compute_network" "vpc" {
     project                 = var.project_id
     name                    = var.vpc_name
     auto_create_subnetworks = false
+    lifecycle {
+        create_before_destroy = true
+    }
 }
 
 resource "google_compute_subnetwork" "default" {
@@ -9,6 +12,16 @@ resource "google_compute_subnetwork" "default" {
     ip_cidr_range = var.ip_cidr_range
     region        = var.region
     network       = google_compute_network.vpc.id
+    lifecycle {
+        create_before_destroy = true
+    }
+}
+
+resource "google_vpc_access_connector" "connector" {
+    name          = "connect-vpc"
+    subnet {
+        name = google_compute_subnetwork.default.name
+    }
 }
 
 resource "google_compute_global_address" "private_ip_address" {

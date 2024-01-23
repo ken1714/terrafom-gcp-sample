@@ -5,6 +5,7 @@ locals {
         "servicenetworking.googleapis.com",
         "sql-component.googleapis.com",
         "sqladmin.googleapis.com",
+        "vpcaccess.googleapis.com",
         "iam.googleapis.com",
         "iap.googleapis.com",
         "run.googleapis.com",
