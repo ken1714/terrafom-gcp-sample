@@ -4,6 +4,7 @@ locals {
         "secretmanager.googleapis.com",
         "servicenetworking.googleapis.com",
         "sql-component.googleapis.com",
+        "sqladmin.googleapis.com",
         "iam.googleapis.com",
         "iap.googleapis.com",
         "run.googleapis.com",
