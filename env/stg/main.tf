@@ -23,6 +23,8 @@ resource "google_project_service" "service" {
 }
 
 module "backend" {
+    # terraform applyの際、depends_onのモジュールやリソースを生成し終えた後に本モジュールのリソースを作成したい
+    depends_on = [google_project_service.service]
     source              = "../../modules/CloudRun"
     cloudrun_name       = "backend"
     region              = var.region
@@ -34,6 +36,7 @@ module "backend" {
 }
 
 module "postgresql" {
+    depends_on = [google_project_service.service]
     source              = "../../modules/CloudSQL"
     sql_name            = "postgresql"
     region              = var.region
@@ -47,6 +50,7 @@ module "postgresql" {
 }
 
 module "vpc" {
+    depends_on = [google_project_service.service]
     source        = "../../modules/VPC"
     project_id    = var.project_id
     region        = var.region
