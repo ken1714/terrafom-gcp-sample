@@ -9,7 +9,7 @@ resource "google_cloud_run_v2_service" "default" {
             max_instance_count = 2
         }
         dynamic "volumes" {
-            for_each = (var.sql_connection_name == null) ? [true] : []
+            for_each = (var.sql_connection_name != null) ? [true] : []
             content {
                 name = "cloudsql"  # CloudSQLを使用する場合は必ず"cloudsql"
                 cloud_sql_instance {
@@ -19,6 +19,13 @@ resource "google_cloud_run_v2_service" "default" {
         }
         containers {
             image = var.image
+            ports {
+                container_port = 3000
+            }
+            volume_mounts {
+                name = "cloudsql"
+                mount_path = "/cloudsql"
+            }
         }
         vpc_access {
             network_interfaces {
