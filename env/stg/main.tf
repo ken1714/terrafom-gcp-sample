@@ -26,17 +26,17 @@ module "backend" {
     cloudrun_name       = "backend"
     region              = var.region
     ingress             = "INGRESS_TRAFFIC_ALL"
-    sql_connection_name = module.mysql.connection_name
+    sql_connection_name = module.postgresql.connection_name
     image               = "us-docker.pkg.dev/cloudrun/container/hello"
     vpc_id              = module.vpc.network_id
     vpc_subnet_id       = module.vpc.subnet_id
 }
 
-module "mysql" {
+module "postgresql" {
     source              = "../../modules/CloudSQL"
-    sql_name            = "mysql"
+    sql_name            = "postgresql"
     region              = var.region
-    database_version    = "MYSQL_5_7"
+    database_version    = "POSTGRES_15"
     machine_type        = "db-f1-micro"
     vpc_id              = module.vpc.network_id
     user_name           = "sample-user"
@@ -54,6 +54,7 @@ module "vpc" {
 }
 
 module "secret_manager" {
+    depends_on = [google_project_service.service]
     source    = "../../modules/SecretManager"
     secret_id = "secret"
 }
