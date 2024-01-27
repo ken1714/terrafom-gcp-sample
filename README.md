@@ -42,3 +42,13 @@ $ gcloud init
 $ gcloud auth login
 $ gcloud auth application-default login
 ```
+
+## 4. インフラ構築の方法
+
+以下のコマンドを実行する。
+
+```bash
+$ cd env/stg
+$ terraform init
+$ terraform apply
+```
