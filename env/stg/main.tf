@@ -31,7 +31,7 @@ module "backend" {
     region              = var.region
     ingress             = "INGRESS_TRAFFIC_ALL"
     sql_connection_name = module.postgresql.connection_name
-    image               = "us-docker.pkg.dev/cloudrun/container/hello"
+    image               = var.backend_image
     vpc_id              = module.vpc.network_id
     vpc_subnet_id       = module.vpc.subnet_id
 }
