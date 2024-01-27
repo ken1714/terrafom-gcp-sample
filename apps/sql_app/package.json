@@ -4,7 +4,7 @@
     "main": "index.js",
     "dependencies": {
         "docker-names": "*",
-        "dotenv": "^16.4.1",
+        "dotenv": "*",
         "pg": "*"
     }
 }
