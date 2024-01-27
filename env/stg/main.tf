@@ -56,7 +56,7 @@ module "postgresql" {
     database_version    = "POSTGRES_15"
     machine_type        = "db-f1-micro"
     vpc_id              = module.vpc.network_id
-    user_name           = "sample-user"
+    user_name           = "SampleUser"
     database_password   = var.database_password
     deletion_protection = true
     secret_full_id       = module.secret_manager.secret_full_id
