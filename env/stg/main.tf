@@ -36,6 +36,18 @@ module "backend" {
     vpc_subnet_id       = module.vpc.subnet_id
 }
 
+module "frontend" {
+    depends_on = [google_project_service.service]
+    source              = "../../modules/CloudRun"
+    cloudrun_name       = "frontend"
+    region              = var.region
+    ingress             = "INGRESS_TRAFFIC_ALL"
+    sql_connection_name = null  # SQLには接続しない
+    image               = var.frontend_image
+    vpc_id              = module.vpc.network_id
+    vpc_subnet_id       = module.vpc.subnet_id
+}
+
 module "postgresql" {
     depends_on = [google_project_service.service]
     source              = "../../modules/CloudSQL"

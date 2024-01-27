@@ -11,6 +11,11 @@ variable backend_image {
     type    = string
 }
 
+variable frontend_image {
+    type    = string
+}
+
+
 variable database_password {
     type      = string
     sensitive = true
