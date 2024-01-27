@@ -1,0 +1,10 @@
+{
+    "name": "terraform-gcp-sample",
+    "version": "1.0.0",
+    "main": "index.js",
+    "dependencies": {
+        "docker-names": "*",
+        "dotenv": "^16.4.1",
+        "pg": "*"
+    }
+}
