@@ -25,39 +25,22 @@ resource "google_cloud_run_domain_mapping" "default" {
     }
 }
 
-# ドメインマッピングで発生する各種DNSレコード情報を動的に収集
-# locals {
-#     dns_records_A     = [for rr in google_cloud_run_domain_mapping.default.status[0].resource_records : rr.rrdata if rr.type == "A"]
-#     dns_records_AAAA  = [for rr in google_cloud_run_domain_mapping.default.status[0].resource_records : rr.rrdata if rr.type == "AAAA"]
-#     dns_records_CNAME = [for rr in google_cloud_run_domain_mapping.default.status[0].resource_records : rr.rrdata if rr.type == "CNAME"]
-# }
+# DNSレコードの登録(取得したドメイン名でアクセスできるようにする)
+# TODO: rrdatasを動的に変更できるようにする
+# Aレコードを生成
+resource "google_dns_record_set" "A" {
+    managed_zone = google_dns_managed_zone.default.name
+    name         = "${var.domain}."
+    type         = "A"
+    ttl          = 3600
+    rrdatas      = var.dns_records_A
+}
 
-# # A、AAAAレコードがない場合はCNAMEレコードを生成
-# resource "google_dns_record_set" "CNAME" {
-#     count        = length(local.dns_records_A) > 0 || length(local.dns_records_AAAA) > 0 ? 0 : 1
-#     name         = "${var.domain}."
-#     type         = "CNAME"
-#     ttl          = 3600
-#     managed_zone = google_dns_managed_zone.default.name
-#     rrdatas      = local.dns_records_CNAME
-# }
-
-# # Aレコードがある場合はAレコードを生成
-# resource "google_dns_record_set" "A" {
-#     count        = length(local.dns_records_A) > 0 ? 1 : 0
-#     managed_zone = google_dns_managed_zone.default.name
-#     name         = "${var.domain}."
-#     type         = "A"
-#     ttl          = 3600
-#     rrdatas      = local.dns_records_A
-# }
-
-# # AAAAレコードがある場合はAAAAレコードを生成
-# resource "google_dns_record_set" "AAAA" {
-#     count        = length(local.dns_records_AAAA) > 0 ? 1 : 0
-#     managed_zone = google_dns_managed_zone.default.name
-#     name         = "${var.domain}."
-#     type         = "AAAA"
-#     ttl          = 3600
-#     rrdatas      = local.dns_records_AAAA
-# }
+# AAAAレコードを生成
+resource "google_dns_record_set" "AAAA" {
+    managed_zone = google_dns_managed_zone.default.name
+    name         = "${var.domain}."
+    type         = "AAAA"
+    ttl          = 3600
+    rrdatas      = var.dns_records_AAAA
+}
