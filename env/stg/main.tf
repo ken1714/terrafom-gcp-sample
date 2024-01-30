@@ -1,5 +1,6 @@
 locals {
     services = toset([
+        "dns.googleapis.com",
         "compute.googleapis.com",
         "secretmanager.googleapis.com",
         "servicenetworking.googleapis.com",
@@ -60,6 +61,28 @@ module "postgresql" {
     database_password   = var.database_password
     deletion_protection = true
     secret_full_id       = module.secret_manager.secret_full_id
+}
+
+module "load_balancing" {
+    depends_on             = [google_project_service.service]
+    source                 = "../../modules/LoadBalancing"
+    project_id             = var.project_id
+    region                 = var.region
+    domain                 = var.domain
+    frontend_cloudrun_name = module.frontend.cloudrun_name
+    frontend_cloudrun_id   = module.frontend.cloudrun_id
+}
+
+
+module "dns" {
+    depends_on             = [google_project_service.service]
+    source                 = "../../modules/CloudDNS"
+    project_id             = var.project_id
+    region                 = var.region
+    domain                 = var.domain
+    frontend_cloudrun_name = module.frontend.cloudrun_id
+    dns_records_A          = var.dns_records_A
+    dns_records_AAAA       = var.dns_records_AAAA
 }
 
 module "vpc" {

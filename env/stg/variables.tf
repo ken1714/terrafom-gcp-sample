@@ -20,3 +20,15 @@ variable database_password {
     type      = string
     sensitive = true
 }
+
+variable domain {
+    type = string
+}
+
+variable dns_records_A {
+    type = list(string)
+}
+
+variable dns_records_AAAA {
+    type = list(string)
+}
