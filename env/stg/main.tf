@@ -31,7 +31,7 @@ module "backend" {
     source              = "../../modules/CloudRun"
     cloudrun_name       = "backend"
     region              = var.region
-    ingress             = "INGRESS_TRAFFIC_ALL"
+    ingress             = "INGRESS_TRAFFIC_INTERNAL_ONLY"
     sql_connection_name = module.postgresql.connection_name
     image               = var.backend_image
     vpc_id              = module.vpc.network_id
@@ -43,7 +43,7 @@ module "frontend" {
     source              = "../../modules/CloudRun"
     cloudrun_name       = "frontend"
     region              = var.region
-    ingress             = "INGRESS_TRAFFIC_ALL"
+    ingress             = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
     sql_connection_name = null  # SQLには接続しない
     image               = var.frontend_image
     vpc_id              = module.vpc.network_id
