@@ -1,6 +1,7 @@
 locals {
     services = toset([
         "dns.googleapis.com",
+        "certificatemanager.googleapis.com",
         "compute.googleapis.com",
         "secretmanager.googleapis.com",
         "servicenetworking.googleapis.com",
@@ -61,6 +62,12 @@ module "postgresql" {
     database_password   = var.database_password
     deletion_protection = true
     secret_full_id       = module.secret_manager.secret_full_id
+}
+
+module "certificate_manager" {
+    depends_on             = [google_project_service.service]
+    source                 = "../../modules/CertificateManager"
+    domain                 = var.domain
 }
 
 module "load_balancing" {
