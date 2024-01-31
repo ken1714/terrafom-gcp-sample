@@ -90,6 +90,8 @@ module "dns" {
     frontend_cloudrun_name = module.frontend.cloudrun_id
     dns_records_A          = var.dns_records_A
     dns_records_AAAA       = var.dns_records_AAAA
+    dns_auth_record_name_CNAME = module.certificate_manager.dns_auth_record_name_CNAME
+    dns_auth_record_data_CNAME = module.certificate_manager.dns_auth_record_data_CNAME
 }
 
 module "vpc" {
