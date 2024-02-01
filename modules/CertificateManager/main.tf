@@ -18,7 +18,6 @@ resource "google_certificate_manager_certificate" "default" {
     }
 }
 
-
 resource "google_certificate_manager_dns_authorization" "default" {
     name        = "dns-auth-${random_id.default.hex}"
     description = "The default dnss"
