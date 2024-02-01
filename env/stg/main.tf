@@ -1,6 +1,7 @@
 locals {
     services = toset([
         "dns.googleapis.com",
+        "certificatemanager.googleapis.com",
         "compute.googleapis.com",
         "secretmanager.googleapis.com",
         "servicenetworking.googleapis.com",
@@ -63,6 +64,12 @@ module "postgresql" {
     secret_full_id       = module.secret_manager.secret_full_id
 }
 
+module "certificate_manager" {
+    depends_on             = [google_project_service.service]
+    source                 = "../../modules/CertificateManager"
+    domain                 = var.domain
+}
+
 module "load_balancing" {
     depends_on             = [google_project_service.service]
     source                 = "../../modules/LoadBalancing"
@@ -75,14 +82,16 @@ module "load_balancing" {
 
 
 module "dns" {
-    depends_on             = [google_project_service.service]
-    source                 = "../../modules/CloudDNS"
-    project_id             = var.project_id
-    region                 = var.region
-    domain                 = var.domain
-    frontend_cloudrun_name = module.frontend.cloudrun_id
-    dns_records_A          = var.dns_records_A
-    dns_records_AAAA       = var.dns_records_AAAA
+    depends_on                 = [google_project_service.service]
+    source                     = "../../modules/CloudDNS"
+    project_id                 = var.project_id
+    region                     = var.region
+    domain                     = var.domain
+    frontend_cloudrun_name     = module.frontend.cloudrun_id
+    dns_records_A              = var.dns_records_A
+    dns_records_AAAA           = var.dns_records_AAAA
+    dns_auth_record_name_CNAME = module.certificate_manager.dns_auth_record_name_CNAME
+    dns_auth_record_data_CNAME = module.certificate_manager.dns_auth_record_data_CNAME
 }
 
 module "vpc" {

@@ -44,3 +44,12 @@ resource "google_dns_record_set" "AAAA" {
     ttl          = 3600
     rrdatas      = var.dns_records_AAAA
 }
+
+# CNAMEレコードを生成(Google CloudでDNSを管理している場合は必要)
+resource "google_dns_record_set" "CNAME" {
+    managed_zone = google_dns_managed_zone.default.name
+    name         = var.dns_auth_record_name_CNAME
+    type         = "CNAME"
+    ttl          = 300
+    rrdatas      = [var.dns_auth_record_data_CNAME]
+}
