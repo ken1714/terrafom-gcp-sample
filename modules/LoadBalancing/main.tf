@@ -94,3 +94,27 @@ resource "google_compute_global_forwarding_rule" "default" {
     ip_protocol = "TCP"
     port_range  = "443"
 }
+
+# HTTP向け
+resource "google_compute_url_map" "https_redirect" {
+    name = "${var.project_id}-urlmap-https-redirect"
+    default_url_redirect {
+        redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
+        https_redirect         = true
+        strip_query            = false
+    }
+}
+
+# HTTPプロキシ
+resource "google_compute_target_http_proxy" "https_redirect" {
+    name             = "${var.project_id}-http-proxy"
+    url_map          = google_compute_url_map.https_redirect.id
+}
+
+resource "google_compute_global_forwarding_rule" "https_redirect" {
+    name   = "${var.project_id}-load-balancer-http"
+
+    target = google_compute_target_http_proxy.https_redirect.id
+    port_range = "80"
+    ip_address = google_compute_global_address.default.address
+}
