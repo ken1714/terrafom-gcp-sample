@@ -76,6 +76,9 @@ module "load_balancing" {
     project_id             = var.project_id
     region                 = var.region
     domain                 = var.domain
+    accessible_members     = var.accessible_members
+    oauth2_client_id       = var.oauth2_client_id
+    oauth2_client_secret   = var.oauth2_client_secret
     frontend_cloudrun_name = module.frontend.cloudrun_name
     frontend_cloudrun_id   = module.frontend.cloudrun_id
 }

@@ -25,10 +25,22 @@ variable domain {
     type = string
 }
 
+variable oauth2_client_id {
+    type = string
+}
+
+variable oauth2_client_secret {
+    type = string
+}
+
 variable dns_records_A {
     type = list(string)
 }
 
 variable dns_records_AAAA {
+    type = list(string)
+}
+
+variable accessible_members {
     type = list(string)
 }
