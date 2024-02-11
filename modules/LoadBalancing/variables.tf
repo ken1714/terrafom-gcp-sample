@@ -29,3 +29,7 @@ variable frontend_cloudrun_name {
 variable frontend_cloudrun_id {
     type = string
 }
+
+variable certificate_map_id {
+    type = string
+}

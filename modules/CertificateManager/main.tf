@@ -6,7 +6,6 @@ resource "random_id" "default" {
 resource "google_certificate_manager_certificate" "default" {
     name        = "dns-cert-${random_id.default.hex}"
     description = "The default cert"
-    scope       = "EDGE_CACHE"
 
     managed {
         domains = [
@@ -22,4 +21,23 @@ resource "google_certificate_manager_dns_authorization" "default" {
     name        = "dns-auth-${random_id.default.hex}"
     description = "The default dnss"
     domain      = var.domain
+}
+
+resource "google_certificate_manager_certificate_map" "default" {
+    name        = "certificate-map-${random_id.default.hex}"
+    description = "${var.domain} certificate map"
+    labels = {
+        "terraform" : true
+    }
+}
+
+resource "google_certificate_manager_certificate_map_entry" "default" {
+    name        = "certificate-map-entry-${random_id.default.hex}"
+    description = "${var.domain} certificate map entry"
+    map         = google_certificate_manager_certificate_map.default.name
+    labels = {
+        "terraform" : true
+    }
+    certificates = [google_certificate_manager_certificate.default.id]
+    hostname     = var.domain
 }

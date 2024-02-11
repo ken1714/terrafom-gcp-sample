@@ -19,7 +19,7 @@ resource "google_compute_ssl_policy" "default" {
 
 # ネットワークエンドポイントを追跡するバックエンドサービス
 resource "google_compute_backend_service" "default" {
-    name        = "frontend"
+    name        = "load-balancing-backend-frontend"
     protocol    = "HTTP"
     port_name   = "http"
     timeout_sec = 30
@@ -47,7 +47,7 @@ resource "google_iap_web_backend_service_iam_binding" "default" {
 
 # フロントエンドへのネットワークエンドポイント
 resource "google_compute_region_network_endpoint_group" "frontend" {
-    name                  = "frontend-endpoint"
+    name                  = "network-endpoint-frontend"
     network_endpoint_type = "SERVERLESS"
     region                = var.region
     cloud_run {
@@ -84,6 +84,7 @@ resource "google_compute_target_https_proxy" "default" {
     url_map          = google_compute_url_map.default.id
     ssl_certificates = [google_compute_managed_ssl_certificate.default.id]
     ssl_policy       = google_compute_ssl_policy.default.id
+    certificate_map  = "//certificatemanager.googleapis.com/${var.certificate_map_id}"
 }
 
 # Trafficルール

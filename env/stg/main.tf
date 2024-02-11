@@ -81,6 +81,7 @@ module "load_balancing" {
     oauth2_client_secret   = var.oauth2_client_secret
     frontend_cloudrun_name = module.frontend.cloudrun_name
     frontend_cloudrun_id   = module.frontend.cloudrun_id
+    certificate_map_id     = module.certificate_manager.certificate_map_id
 }
 
 
