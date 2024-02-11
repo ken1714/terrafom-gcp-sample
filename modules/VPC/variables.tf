@@ -13,3 +13,7 @@ variable vpc_name {
 variable ip_cidr_range {
     type = string
 }
+
+variable connector_ip_cidr_range {
+    type = string
+}

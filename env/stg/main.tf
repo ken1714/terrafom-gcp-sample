@@ -98,12 +98,13 @@ module "dns" {
 }
 
 module "vpc" {
-    depends_on = [google_project_service.service]
-    source        = "../../modules/VPC"
-    project_id    = var.project_id
-    region        = var.region
-    vpc_name      = "vpc"
-    ip_cidr_range = "192.168.0.0/16"
+    depends_on              = [google_project_service.service]
+    source                  = "../../modules/VPC"
+    project_id              = var.project_id
+    region                  = var.region
+    vpc_name                = "vpc"
+    ip_cidr_range           = "192.168.0.0/16"
+    connector_ip_cidr_range = "10.8.0.0/28"
 }
 
 module "secret_manager" {
