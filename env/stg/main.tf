@@ -29,6 +29,7 @@ module "backend" {
     # terraform applyの際、depends_onのモジュールやリソースを生成し終えた後に本モジュールのリソースを作成したい
     depends_on = [google_project_service.service]
     source              = "../../modules/CloudRun"
+    project_id          = var.project_id
     cloudrun_name       = "backend"
     region              = var.region
     ingress             = "INGRESS_TRAFFIC_INTERNAL_ONLY"
@@ -36,11 +37,15 @@ module "backend" {
     image               = var.backend_image
     vpc_id              = module.vpc.network_id
     vpc_subnet_id       = module.vpc.subnet_id
+    oauth2_client_id     = var.oauth2_client_id
+    oauth2_client_secret = var.oauth2_client_secret
+    accessible_members   = var.accessible_members
 }
 
 module "frontend" {
     depends_on = [google_project_service.service]
     source              = "../../modules/CloudRun"
+    project_id          = var.project_id
     cloudrun_name       = "frontend"
     region              = var.region
     ingress             = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
@@ -48,6 +53,9 @@ module "frontend" {
     image               = var.frontend_image
     vpc_id              = module.vpc.network_id
     vpc_subnet_id       = module.vpc.subnet_id
+    oauth2_client_id     = var.oauth2_client_id
+    oauth2_client_secret = var.oauth2_client_secret
+    accessible_members   = var.accessible_members
 }
 
 module "postgresql" {
@@ -76,12 +84,12 @@ module "load_balancing" {
     project_id             = var.project_id
     region                 = var.region
     domain                 = var.domain
-    accessible_members     = var.accessible_members
-    oauth2_client_id       = var.oauth2_client_id
-    oauth2_client_secret   = var.oauth2_client_secret
-    frontend_cloudrun_name = module.frontend.cloudrun_name
-    frontend_cloudrun_id   = module.frontend.cloudrun_id
     certificate_map_id     = module.certificate_manager.certificate_map_id
+    default_backend_id     = module.frontend.backend_id
+    path_rules = {
+        "frontend": {path = "/*", service = module.frontend.backend_id},
+        "backend" : {path = "/api/*", service = module.backend.backend_id},
+    }
 }
 
 

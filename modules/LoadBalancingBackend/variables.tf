@@ -6,18 +6,18 @@ variable region {
     type = string
 }
 
-variable domain {
+variable cloudrun_name {
     type = string
 }
 
-variable certificate_map_id {
+variable oauth2_client_id {
     type = string
 }
 
-variable default_backend_id {
+variable oauth2_client_secret {
     type = string
 }
 
-variable path_rules {
-    # type = list(map)
+variable accessible_members {
+    type = list(string)
 }

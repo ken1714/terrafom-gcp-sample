@@ -1,3 +1,7 @@
+variable project_id {
+    type = string
+}
+
 variable cloudrun_name {
     type = string
 }
@@ -25,4 +29,16 @@ variable vpc_id {
 
 variable vpc_subnet_id {
     type = string
+}
+
+variable oauth2_client_id {
+    type = string
+}
+
+variable oauth2_client_secret {
+    type = string
+}
+
+variable accessible_members {
+    type = list(string)
 }
