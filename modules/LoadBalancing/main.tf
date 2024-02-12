@@ -19,7 +19,7 @@ resource "google_compute_ssl_policy" "default" {
 
 # ネットワークエンドポイントを追跡するバックエンドサービス
 resource "google_compute_backend_service" "default" {
-    name        = "frontend"
+    name        = "load-balancing-backend-frontend"
     protocol    = "HTTP"
     port_name   = "http"
     timeout_sec = 30
@@ -27,11 +27,27 @@ resource "google_compute_backend_service" "default" {
     backend {
         group = google_compute_region_network_endpoint_group.frontend.id
     }
+
+    # IAP設定を紐づける
+    iap {
+        oauth2_client_id     = var.oauth2_client_id
+        oauth2_client_secret = var.oauth2_client_secret
+    }
 }
+
+# IAPによりアクセス可能なGoogleアカウントを制限
+# 組織に属していない場合、terrform applyの前に手動でOAuthの同意画面を構成する必要がある
+resource "google_iap_web_backend_service_iam_binding" "default" {
+    project             = var.project_id
+    web_backend_service = google_compute_backend_service.default.name
+    role                = "roles/iap.httpsResourceAccessor"
+    members             = var.accessible_members
+}
+
 
 # フロントエンドへのネットワークエンドポイント
 resource "google_compute_region_network_endpoint_group" "frontend" {
-    name                  = "frontend-endpoint"
+    name                  = "network-endpoint-frontend"
     network_endpoint_type = "SERVERLESS"
     region                = var.region
     cloud_run {
@@ -68,6 +84,7 @@ resource "google_compute_target_https_proxy" "default" {
     url_map          = google_compute_url_map.default.id
     ssl_certificates = [google_compute_managed_ssl_certificate.default.id]
     ssl_policy       = google_compute_ssl_policy.default.id
+    certificate_map  = "//certificatemanager.googleapis.com/${var.certificate_map_id}"
 }
 
 # Trafficルール
@@ -77,4 +94,28 @@ resource "google_compute_global_forwarding_rule" "default" {
     ip_address  = google_compute_global_address.default.address
     ip_protocol = "TCP"
     port_range  = "443"
+}
+
+# HTTP向け
+resource "google_compute_url_map" "https_redirect" {
+    name = "${var.project_id}-urlmap-https-redirect"
+    default_url_redirect {
+        redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
+        https_redirect         = true
+        strip_query            = false
+    }
+}
+
+# HTTPプロキシ
+resource "google_compute_target_http_proxy" "https_redirect" {
+    name             = "${var.project_id}-http-proxy"
+    url_map          = google_compute_url_map.https_redirect.id
+}
+
+resource "google_compute_global_forwarding_rule" "https_redirect" {
+    name   = "${var.project_id}-load-balancer-http"
+
+    target = google_compute_target_http_proxy.https_redirect.id
+    port_range = "80"
+    ip_address = google_compute_global_address.default.address
 }

@@ -31,7 +31,7 @@ module "backend" {
     source              = "../../modules/CloudRun"
     cloudrun_name       = "backend"
     region              = var.region
-    ingress             = "INGRESS_TRAFFIC_ALL"
+    ingress             = "INGRESS_TRAFFIC_INTERNAL_ONLY"
     sql_connection_name = module.postgresql.connection_name
     image               = var.backend_image
     vpc_id              = module.vpc.network_id
@@ -43,7 +43,7 @@ module "frontend" {
     source              = "../../modules/CloudRun"
     cloudrun_name       = "frontend"
     region              = var.region
-    ingress             = "INGRESS_TRAFFIC_ALL"
+    ingress             = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
     sql_connection_name = null  # SQLには接続しない
     image               = var.frontend_image
     vpc_id              = module.vpc.network_id
@@ -76,8 +76,12 @@ module "load_balancing" {
     project_id             = var.project_id
     region                 = var.region
     domain                 = var.domain
+    accessible_members     = var.accessible_members
+    oauth2_client_id       = var.oauth2_client_id
+    oauth2_client_secret   = var.oauth2_client_secret
     frontend_cloudrun_name = module.frontend.cloudrun_name
     frontend_cloudrun_id   = module.frontend.cloudrun_id
+    certificate_map_id     = module.certificate_manager.certificate_map_id
 }
 
 
@@ -89,18 +93,18 @@ module "dns" {
     domain                     = var.domain
     frontend_cloudrun_name     = module.frontend.cloudrun_id
     dns_records_A              = var.dns_records_A
-    dns_records_AAAA           = var.dns_records_AAAA
     dns_auth_record_name_CNAME = module.certificate_manager.dns_auth_record_name_CNAME
     dns_auth_record_data_CNAME = module.certificate_manager.dns_auth_record_data_CNAME
 }
 
 module "vpc" {
-    depends_on = [google_project_service.service]
-    source        = "../../modules/VPC"
-    project_id    = var.project_id
-    region        = var.region
-    vpc_name      = "vpc"
-    ip_cidr_range = "192.168.0.0/16"
+    depends_on              = [google_project_service.service]
+    source                  = "../../modules/VPC"
+    project_id              = var.project_id
+    region                  = var.region
+    vpc_name                = "vpc"
+    ip_cidr_range           = "192.168.0.0/16"
+    connector_ip_cidr_range = "10.8.0.0/28"
 }
 
 module "secret_manager" {

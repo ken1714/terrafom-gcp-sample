@@ -19,9 +19,8 @@ resource "google_compute_subnetwork" "default" {
 
 resource "google_vpc_access_connector" "connector" {
     name          = "connect-vpc"
-    subnet {
-        name = google_compute_subnetwork.default.name
-    }
+    network       = google_compute_network.vpc.id
+    ip_cidr_range = var.connector_ip_cidr_range
 }
 
 resource "google_compute_global_address" "private_ip_address" {

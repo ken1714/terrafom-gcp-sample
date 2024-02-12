@@ -11,20 +11,6 @@ resource "google_dns_managed_zone" "default" {
     }
 }
 
-# Cloud DNSとCloud Runのドメインマッピング
-resource "google_cloud_run_domain_mapping" "default" {
-    location = var.region
-    name     = var.domain
-
-    metadata {
-        namespace = var.project_id
-    }
-
-    spec {
-        route_name = var.frontend_cloudrun_name
-    }
-}
-
 # DNSレコードの登録(取得したドメイン名でアクセスできるようにする)
 # TODO: rrdatasを動的に変更できるようにする
 # Aレコードを生成
@@ -34,15 +20,6 @@ resource "google_dns_record_set" "A" {
     type         = "A"
     ttl          = 3600
     rrdatas      = var.dns_records_A
-}
-
-# AAAAレコードを生成
-resource "google_dns_record_set" "AAAA" {
-    managed_zone = google_dns_managed_zone.default.name
-    name         = "${var.domain}."
-    type         = "AAAA"
-    ttl          = 3600
-    rrdatas      = var.dns_records_AAAA
 }
 
 # CNAMEレコードを生成(Google CloudでDNSを管理している場合は必要)

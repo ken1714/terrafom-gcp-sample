@@ -18,10 +18,6 @@ variable dns_records_A {
     type = list(string)
 }
 
-variable dns_records_AAAA {
-    type = list(string)
-}
-
 variable dns_auth_record_name_CNAME {
     type = string
 }
