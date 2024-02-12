@@ -27,32 +27,32 @@ resource "google_project_service" "service" {
 
 module "backend" {
     # terraform applyの際、depends_onのモジュールやリソースを生成し終えた後に本モジュールのリソースを作成したい
-    depends_on = [google_project_service.service]
-    source              = "../../modules/CloudRun"
-    project_id          = var.project_id
-    cloudrun_name       = "backend"
-    region              = var.region
-    ingress             = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
-    sql_connection_name = module.postgresql.connection_name
-    image               = var.backend_image
-    vpc_id              = module.vpc.network_id
-    vpc_subnet_id       = module.vpc.subnet_id
+    depends_on           = [google_project_service.service]
+    source               = "../../modules/CloudRun"
+    project_id           = var.project_id
+    cloudrun_name        = "backend"
+    region               = var.region
+    ingress              = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
+    sql_connection_name  = module.postgresql.connection_name
+    image                = var.backend_image
+    vpc_id               = module.vpc.network_id
+    vpc_subnet_id        = module.vpc.subnet_id
     oauth2_client_id     = var.oauth2_client_id
     oauth2_client_secret = var.oauth2_client_secret
     accessible_members   = var.accessible_members
 }
 
 module "frontend" {
-    depends_on = [google_project_service.service]
-    source              = "../../modules/CloudRun"
-    project_id          = var.project_id
-    cloudrun_name       = "frontend"
-    region              = var.region
-    ingress             = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
-    sql_connection_name = null  # SQLには接続しない
-    image               = var.frontend_image
-    vpc_id              = module.vpc.network_id
-    vpc_subnet_id       = module.vpc.subnet_id
+    depends_on           = [google_project_service.service]
+    source               = "../../modules/CloudRun"
+    project_id           = var.project_id
+    cloudrun_name        = "frontend"
+    region               = var.region
+    ingress              = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
+    sql_connection_name  = null  # SQLには接続しない
+    image                = var.frontend_image
+    vpc_id               = module.vpc.network_id
+    vpc_subnet_id        = module.vpc.subnet_id
     oauth2_client_id     = var.oauth2_client_id
     oauth2_client_secret = var.oauth2_client_secret
     accessible_members   = var.accessible_members
