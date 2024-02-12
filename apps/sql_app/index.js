@@ -4,6 +4,8 @@ const {Pool} = require('pg');
 const http = require('http');
 const fs = require('fs');
 const dockerNames = require('docker-names');
+const express = require('express');
+const bodyParser = require('body-parser');
 
 // .envから環境変数を読み込み
 require('dotenv').config();
@@ -78,3 +80,16 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT);
+
+const app = express();
+app.use(bodyParser.urlencoded({ extended: true }))
+app.listen(PORT)
+app.get('/api/get', function (req, res) {
+    res.send({'message': 'Receive a Get request'})
+    console.log('Receive a Get request')
+})
+app.post('/api/post', function (req, res) {
+    res.send({'message': 'Receive a POST request as ' + req.body.text})
+    console.log('Receive a POST request')
+    console.log(req.body)
+})

@@ -5,6 +5,8 @@
     "dependencies": {
         "docker-names": "*",
         "dotenv": "*",
-        "pg": "*"
+        "pg": "*",
+        "express": "*",
+        "body-parser": "*"
     }
 }
