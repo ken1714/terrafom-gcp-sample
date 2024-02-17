@@ -32,12 +32,15 @@ resource "google_cloud_run_v2_service" "default" {
                 mount_path = "/cloudsql"
             }
         }
-        vpc_access {
-            network_interfaces {
-                network    = var.vpc_id
-                subnetwork = var.vpc_subnet_id
+        dynamic "vpc_access" {
+            for_each = var.enable_vpc ? [true] : []
+            content {
+                network_interfaces {
+                    network    = var.vpc_id
+                    subnetwork = var.vpc_subnet_id
+                }
+                egress = "ALL_TRAFFIC"
             }
-            egress = "ALL_TRAFFIC"
         }
         service_account = google_service_account.default.email
     }

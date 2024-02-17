@@ -35,6 +35,7 @@ module "backend" {
     ingress              = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
     sql_connection_name  = module.postgresql.connection_name
     image                = var.backend_image
+    enable_vpc           = true
     vpc_id               = module.vpc.network_id
     vpc_subnet_id        = module.vpc.subnet_id
     oauth2_client_id     = var.oauth2_client_id
@@ -52,6 +53,7 @@ module "frontend" {
     ingress              = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
     sql_connection_name  = null  # SQLには接続しない
     image                = var.frontend_image
+    enable_vpc           = false
     vpc_id               = module.vpc.network_id
     vpc_subnet_id        = module.vpc.subnet_id
     oauth2_client_id     = var.oauth2_client_id

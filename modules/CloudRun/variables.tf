@@ -23,6 +23,10 @@ variable image {
     type = string
 }
 
+variable enable_vpc {
+    type = bool
+}
+
 variable vpc_id {
     type = string
 }
