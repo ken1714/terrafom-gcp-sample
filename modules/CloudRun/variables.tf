@@ -42,3 +42,7 @@ variable oauth2_client_secret {
 variable accessible_members {
     type = list(string)
 }
+
+variable accessible_cloudrun {
+    # type = map()
+}

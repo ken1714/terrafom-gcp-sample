@@ -40,6 +40,7 @@ module "backend" {
     oauth2_client_id     = var.oauth2_client_id
     oauth2_client_secret = var.oauth2_client_secret
     accessible_members   = var.accessible_members
+    accessible_cloudrun  = {}
 }
 
 module "frontend" {
@@ -56,6 +57,9 @@ module "frontend" {
     oauth2_client_id     = var.oauth2_client_id
     oauth2_client_secret = var.oauth2_client_secret
     accessible_members   = var.accessible_members
+    accessible_cloudrun  = {
+        "backend": {role = "roles/run.invoker", cloudrun_id = module.backend.cloudrun_id}
+    }
 }
 
 module "postgresql" {
