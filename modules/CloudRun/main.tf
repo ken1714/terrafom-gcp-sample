@@ -44,3 +44,13 @@ resource "google_cloud_run_v2_service_iam_member" "noauth" {
     role   = "roles/run.invoker"
     member = "allUsers"
 }
+
+module "load_balancing_backend" {
+    source               = "../../modules/LoadBalancingBackend"
+    project_id           = var.project_id
+    region               = var.region
+    cloudrun_name        = google_cloud_run_v2_service.default.name
+    oauth2_client_id     = var.oauth2_client_id
+    oauth2_client_secret = var.oauth2_client_secret
+    accessible_members   = var.accessible_members
+}

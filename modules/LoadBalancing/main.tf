@@ -17,51 +17,12 @@ resource "google_compute_ssl_policy" "default" {
     min_tls_version = "TLS_1_2"
 }
 
-# ネットワークエンドポイントを追跡するバックエンドサービス
-resource "google_compute_backend_service" "default" {
-    name        = "load-balancing-backend-frontend"
-    protocol    = "HTTP"
-    port_name   = "http"
-    timeout_sec = 30
-
-    backend {
-        group = google_compute_region_network_endpoint_group.frontend.id
-    }
-
-    # IAP設定を紐づける
-    iap {
-        oauth2_client_id     = var.oauth2_client_id
-        oauth2_client_secret = var.oauth2_client_secret
-    }
-}
-
-# IAPによりアクセス可能なGoogleアカウントを制限
-# 組織に属していない場合、terrform applyの前に手動でOAuthの同意画面を構成する必要がある
-resource "google_iap_web_backend_service_iam_binding" "default" {
-    project             = var.project_id
-    web_backend_service = google_compute_backend_service.default.name
-    role                = "roles/iap.httpsResourceAccessor"
-    members             = var.accessible_members
-}
-
-
-# フロントエンドへのネットワークエンドポイント
-resource "google_compute_region_network_endpoint_group" "frontend" {
-    name                  = "network-endpoint-frontend"
-    network_endpoint_type = "SERVERLESS"
-    region                = var.region
-    cloud_run {
-        # リクエストを送りたいCloud Run
-        service = var.frontend_cloudrun_name
-    }
-}
-
 # ロードバランサーの設定
 # URLマッピングを行い、ロードバランサーバックエンドへ振り分ける
 resource "google_compute_url_map" "default" {
     name = "${var.project_id}-urlmap"
 
-    default_service = google_compute_backend_service.default.id
+    default_service = var.default_backend_id
 
     host_rule {
         hosts        = [var.domain]
@@ -70,10 +31,14 @@ resource "google_compute_url_map" "default" {
 
     path_matcher {
         name            = "app"
-        default_service = google_compute_backend_service.default.id
-        path_rule {
-            paths   = ["/*"]
-            service = google_compute_backend_service.default.id
+        default_service = var.default_backend_id
+
+        dynamic "path_rule" {
+            for_each = var.path_rules
+            content {
+                paths = [path_rule.value.path]
+                service = path_rule.value.service
+            }
         }
     }
 }
