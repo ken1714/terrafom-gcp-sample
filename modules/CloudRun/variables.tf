@@ -52,5 +52,8 @@ variable accessible_members {
 }
 
 variable accessible_cloudrun {
-    # type = map()
+    type = map(object({
+        role        = string
+        cloudrun_id = string
+    }))
 }
