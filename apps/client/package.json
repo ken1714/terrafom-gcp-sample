@@ -1,0 +1,11 @@
+{
+    "type": "module",
+    "name": "terraform-gcp-client",
+    "version": "1.0.0",
+    "main": "index.js",
+    "dependencies": {
+        "dotenv": "*",
+        "node-fetch": "*",
+        "google-auth-library": "*"
+    }
+}

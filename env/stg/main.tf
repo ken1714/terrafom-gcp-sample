@@ -41,7 +41,8 @@ module "backend" {
     oauth2_client_id        = var.oauth2_client_id
     oauth2_client_secret    = var.oauth2_client_secret
     accessible_unauthorized = false
-    accessible_members      = var.accessible_members
+    # TODO: 循環参照とならないようなサービスアカウントの定義方法を考える
+    accessible_members      = concat(var.accessible_members, ["serviceAccount:service-account-frontend@phonic-aquifer-412115.iam.gserviceaccount.com"])
     accessible_cloudrun     = {}
 }
 
