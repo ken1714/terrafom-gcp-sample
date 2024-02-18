@@ -5,6 +5,7 @@
     "main": "index.js",
     "dependencies": {
         "dotenv": "*",
-        "node-fetch": "*"
+        "node-fetch": "*",
+        "google-auth-library": "*"
     }
 }

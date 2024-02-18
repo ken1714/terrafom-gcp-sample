@@ -1,25 +1,33 @@
-import fetch from 'node-fetch';
 import http from 'http'
 import fs from 'fs'
 import 'dotenv/config'
+import {GoogleAuth} from 'google-auth-library';
+
+const auth = new GoogleAuth();
 
 
 console.log('Server Start!');
 
-const requestUrl = process.env.BACKEND_URL || 'http://localhost';
-const requestPort = process.env.BACKEND_PORT || 3000;
-const apiPath = "/api/get"
-const response = await fetch(`${requestUrl}:${requestPort}${apiPath}`, {method: 'GET'});
-const responseData = await response.text();
+const sendRequest2Backend = async (apiPath) => {
+    const requestUrl = process.env.BACKEND_URL || 'http://localhost';
+
+    const client = await auth.getIdTokenClient(process.env.TARGET_AUDIENCE);
+    const response = await client.request({
+        url: `${requestUrl}${apiPath}`,
+        method: 'GET',
+    });
+    return response.data;
+};
+
+const responseData = await sendRequest2Backend('/api/get');
 
 // httpサーバーを作成
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(async (req, res) => {
     fs.readFile('./index.html', 'utf-8', async (error, data) => {
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.write(data);
-        res.write(responseData);
-        res.end();
+        await res.writeHead(200, {'Content-Type': 'text/html'});
+        await res.write(responseData.message);
+        await res.end();
     });
 });
 
