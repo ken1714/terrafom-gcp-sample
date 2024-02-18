@@ -1,3 +1,8 @@
+resource "google_service_account" "default" {
+    account_id   = "service-account-${var.cloudrun_name}"
+    display_name = "Service Account for ${var.cloudrun_name}"
+}
+
 resource "google_cloud_run_v2_service" "default" {
     name         = var.cloudrun_name
     location     = var.region
@@ -27,22 +32,34 @@ resource "google_cloud_run_v2_service" "default" {
                 mount_path = "/cloudsql"
             }
         }
-        vpc_access {
-            network_interfaces {
-                network    = var.vpc_id
-                subnetwork = var.vpc_subnet_id
+        dynamic "vpc_access" {
+            for_each = var.enable_vpc ? [true] : []
+            content {
+                network_interfaces {
+                    network    = var.vpc_id
+                    subnetwork = var.vpc_subnet_id
+                }
+                egress = "ALL_TRAFFIC"
             }
-            egress = "ALL_TRAFFIC"
         }
+        service_account = google_service_account.default.email
     }
 }
 
-resource "google_cloud_run_v2_service_iam_member" "noauth" {
-    # TODO: 全ユーザに外部公開しているため修正する
+resource "google_cloud_run_v2_service_iam_member" "default" {
     location = google_cloud_run_v2_service.default.location
     name     = google_cloud_run_v2_service.default.name
     role   = "roles/run.invoker"
-    member = "allUsers"
+    member = var.accessible_unauthorized ? "allUsers" : "serviceAccount:${google_service_account.default.email}"
+}
+
+resource "google_cloud_run_service_iam_member" "member" {
+    for_each = var.accessible_cloudrun
+
+    location = google_cloud_run_v2_service.default.location
+    service  = each.value.cloudrun_id
+    role     = each.value.role
+    member   = "serviceAccount:${google_service_account.default.email}"
 }
 
 module "load_balancing_backend" {

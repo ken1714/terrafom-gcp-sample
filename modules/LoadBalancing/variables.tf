@@ -19,5 +19,8 @@ variable default_backend_id {
 }
 
 variable path_rules {
-    # type = list(map)
+    type = map(object({
+        path    = string
+        service = string
+    }))
 }

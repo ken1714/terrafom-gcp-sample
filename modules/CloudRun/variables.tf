@@ -23,6 +23,10 @@ variable image {
     type = string
 }
 
+variable enable_vpc {
+    type = bool
+}
+
 variable vpc_id {
     type = string
 }
@@ -39,6 +43,17 @@ variable oauth2_client_secret {
     type = string
 }
 
+variable "accessible_unauthorized" {
+    type = bool
+}
+
 variable accessible_members {
     type = list(string)
+}
+
+variable accessible_cloudrun {
+    type = map(object({
+        role        = string
+        cloudrun_id = string
+    }))
 }
