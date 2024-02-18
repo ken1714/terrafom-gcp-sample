@@ -40,6 +40,7 @@ module "backend" {
     vpc_subnet_id        = module.vpc.subnet_id
     oauth2_client_id     = var.oauth2_client_id
     oauth2_client_secret = var.oauth2_client_secret
+    accessible_unauthorized = false
     accessible_members   = var.accessible_members
     accessible_cloudrun  = {}
 }
@@ -58,6 +59,7 @@ module "frontend" {
     vpc_subnet_id        = module.vpc.subnet_id
     oauth2_client_id     = var.oauth2_client_id
     oauth2_client_secret = var.oauth2_client_secret
+    accessible_unauthorized = true  # TODO: 未認証の呼び出しを許可しないように修正する
     accessible_members   = var.accessible_members
     accessible_cloudrun  = {
         "backend": {role = "roles/run.invoker", cloudrun_id = module.backend.cloudrun_id}

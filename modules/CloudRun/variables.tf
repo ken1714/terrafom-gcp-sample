@@ -43,6 +43,10 @@ variable oauth2_client_secret {
     type = string
 }
 
+variable "accessible_unauthorized" {
+    type = bool
+}
+
 variable accessible_members {
     type = list(string)
 }

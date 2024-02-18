@@ -50,7 +50,7 @@ resource "google_cloud_run_v2_service_iam_member" "default" {
     location = google_cloud_run_v2_service.default.location
     name     = google_cloud_run_v2_service.default.name
     role   = "roles/run.invoker"
-    member = "serviceAccount:${google_service_account.default.email}"
+    member = var.accessible_unauthorized ? "allUsers" : "serviceAccount:${google_service_account.default.email}"
 }
 
 resource "google_cloud_run_service_iam_member" "member" {
