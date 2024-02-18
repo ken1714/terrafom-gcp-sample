@@ -27,41 +27,41 @@ resource "google_project_service" "service" {
 
 module "backend" {
     # terraform applyの際、depends_onのモジュールやリソースを生成し終えた後に本モジュールのリソースを作成したい
-    depends_on           = [google_project_service.service]
-    source               = "../../modules/CloudRun"
-    project_id           = var.project_id
-    cloudrun_name        = "backend"
-    region               = var.region
-    ingress              = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
-    sql_connection_name  = module.postgresql.connection_name
-    image                = var.backend_image
-    enable_vpc           = true
-    vpc_id               = module.vpc.network_id
-    vpc_subnet_id        = module.vpc.subnet_id
-    oauth2_client_id     = var.oauth2_client_id
-    oauth2_client_secret = var.oauth2_client_secret
+    depends_on              = [google_project_service.service]
+    source                  = "../../modules/CloudRun"
+    project_id              = var.project_id
+    cloudrun_name           = "backend"
+    region                  = var.region
+    ingress                 = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
+    sql_connection_name     = module.postgresql.connection_name
+    image                   = var.backend_image
+    enable_vpc              = true
+    vpc_id                  = module.vpc.network_id
+    vpc_subnet_id           = module.vpc.subnet_id
+    oauth2_client_id        = var.oauth2_client_id
+    oauth2_client_secret    = var.oauth2_client_secret
     accessible_unauthorized = false
-    accessible_members   = var.accessible_members
-    accessible_cloudrun  = {}
+    accessible_members      = var.accessible_members
+    accessible_cloudrun     = {}
 }
 
 module "frontend" {
-    depends_on           = [google_project_service.service]
-    source               = "../../modules/CloudRun"
-    project_id           = var.project_id
-    cloudrun_name        = "frontend"
-    region               = var.region
-    ingress              = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
-    sql_connection_name  = null  # SQLには接続しない
-    image                = var.frontend_image
-    enable_vpc           = false
-    vpc_id               = module.vpc.network_id
-    vpc_subnet_id        = module.vpc.subnet_id
-    oauth2_client_id     = var.oauth2_client_id
-    oauth2_client_secret = var.oauth2_client_secret
+    depends_on              = [google_project_service.service]
+    source                  = "../../modules/CloudRun"
+    project_id              = var.project_id
+    cloudrun_name           = "frontend"
+    region                  = var.region
+    ingress                 = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
+    sql_connection_name     = null  # SQLには接続しない
+    image                   = var.frontend_image
+    enable_vpc              = false
+    vpc_id                  = module.vpc.network_id
+    vpc_subnet_id           = module.vpc.subnet_id
+    oauth2_client_id        = var.oauth2_client_id
+    oauth2_client_secret    = var.oauth2_client_secret
     accessible_unauthorized = true  # TODO: 未認証の呼び出しを許可しないように修正する
-    accessible_members   = var.accessible_members
-    accessible_cloudrun  = {
+    accessible_members      = var.accessible_members
+    accessible_cloudrun     = {
         "backend": {role = "roles/run.invoker", cloudrun_id = module.backend.cloudrun_id}
     }
 }
