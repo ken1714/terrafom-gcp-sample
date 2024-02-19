@@ -7,6 +7,11 @@ variable region {
     default = "asia-northeast1"
 }
 
+variable location {
+    type    = string
+    default = "ASIA-NORTHEAST1"
+}
+
 variable backend_image {
     type    = string
 }
@@ -15,6 +20,10 @@ variable frontend_image {
     type    = string
 }
 
+variable deletion_protection {
+    type    = bool
+    default = true
+}
 
 variable database_password {
     type      = string

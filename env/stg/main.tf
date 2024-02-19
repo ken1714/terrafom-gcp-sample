@@ -67,6 +67,15 @@ module "frontend" {
     }
 }
 
+module "storage" {
+    source                   = "../../modules/CloudStorage"
+    cloudstorage_name        = "main-storage-${var.project_id}"
+    location                 = var.location
+    force_destroy            = !var.deletion_protection
+    public_access_prevention = "enforced"
+    secret_full_id           = module.secret_manager.secret_full_id
+}
+
 module "postgresql" {
     depends_on = [google_project_service.service]
     source              = "../../modules/CloudSQL"
@@ -77,7 +86,7 @@ module "postgresql" {
     vpc_id              = module.vpc.network_id
     user_name           = "SampleUser"
     database_password   = var.database_password
-    deletion_protection = true
+    deletion_protection = var.deletion_protection
     secret_full_id       = module.secret_manager.secret_full_id
 }
 
