@@ -71,3 +71,13 @@ module "load_balancing_backend" {
     oauth2_client_secret = var.oauth2_client_secret
     accessible_members   = var.accessible_members
 }
+
+module "storage_iam" {
+    for_each = var.accessible_cloudstorage
+
+    source            = "../../modules/CloudStorageIAM"
+    project_id        = var.project_id
+    cloudstorage_name = each.value.name
+    accessible_member = "serviceAccount:${google_service_account.default.email}"
+    secret_id         = each.value.secret_id
+}

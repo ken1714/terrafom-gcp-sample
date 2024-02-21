@@ -65,6 +65,9 @@ module "frontend" {
     accessible_cloudrun     = {
         "backend": {role = "roles/run.invoker", cloudrun_id = module.backend.cloudrun_id}
     }
+    accessible_cloudstorage = {
+        "storage": {name = module.storage.name, secret_id = module.secret_manager.secret_full_id}
+    }
 }
 
 module "storage" {
