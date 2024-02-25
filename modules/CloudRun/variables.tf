@@ -57,3 +57,11 @@ variable accessible_cloudrun {
         cloudrun_id = string
     }))
 }
+
+variable accessible_cloudstorage {
+    type = map(object({
+        name      = string
+        secret_id = string
+    }))
+    default = {}
+}
