@@ -17,3 +17,11 @@ variable public_access_prevention {
 variable secret_full_id {
     type = string
 }
+
+variable domain {
+    type = string
+}
+
+variable max_age_seconds {
+    type = number
+}

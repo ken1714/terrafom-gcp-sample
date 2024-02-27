@@ -77,6 +77,8 @@ module "storage" {
     force_destroy            = !var.deletion_protection
     public_access_prevention = "enforced"
     secret_full_id           = module.secret_manager.secret_full_id
+    domain                   = var.domain
+    max_age_seconds          = 3600
 }
 
 module "postgresql" {
