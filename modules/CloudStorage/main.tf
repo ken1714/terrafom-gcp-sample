@@ -20,6 +20,13 @@ resource "google_storage_bucket" "default" {
     force_destroy = var.force_destroy
 
     public_access_prevention = var.public_access_prevention
+
+    cors {
+        origin          = [var.domain]
+        method          = ["GET", "PUT", "POST", "DELETE"]
+        response_header = ["Content-Type"]
+        max_age_seconds = var.max_age_seconds
+    }
 }
 
 resource "google_secret_manager_secret_version" "default" {

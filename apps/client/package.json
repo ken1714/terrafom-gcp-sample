@@ -6,6 +6,7 @@
     "dependencies": {
         "dotenv": "*",
         "node-fetch": "*",
-        "google-auth-library": "*"
+        "google-auth-library": "*",
+        "@google-cloud/storage": "*"
     }
 }
