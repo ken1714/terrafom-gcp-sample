@@ -1,8 +1,8 @@
-import http from 'http'
-import fs from 'fs'
-import 'dotenv/config'
-import {GoogleAuth} from 'google-auth-library'
-import {Storage} from '@google-cloud/storage'
+import http from 'http';
+import fs from 'fs';
+import 'dotenv/config';
+import {GoogleAuth} from 'google-auth-library';
+import {Storage} from '@google-cloud/storage';
 
 const auth = new GoogleAuth();
 const storage = new Storage();
