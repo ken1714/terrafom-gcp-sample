@@ -22,8 +22,6 @@ const generateV4DownloadSignedUrl = async (bucketName, fileName) => {
         .file(fileName)
         .getSignedUrl(options);
 
-    console.log('Generated signed URL:');
-    console.log(`Download: curl ${url}`);
     return url;
 }
 
@@ -40,8 +38,6 @@ const generateV4UploadSignedUrl = async (bucketName, fileName) => {
         .file(fileName)
         .getSignedUrl(options);
 
-    console.log('Generated signed URL:');
-    console.log(`Upload  : curl -X PUT -H 'Content-Type: application/octet-stream' --upload-file my-file ${url}`);
     return url;
 }
 
