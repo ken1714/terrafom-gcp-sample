@@ -61,7 +61,7 @@ const responseData = await sendRequest2Backend('/api/get');
 // httpサーバーを作成
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(async (req, res) => {
-    const bucketName = 'main-storage-phonic-aquifer-412115';
+    const bucketName = process.env.STORAGE_NAME;
     const downloadUrl = await generateV4DownloadSignedUrl(bucketName, 'data/download_me.txt');
     const uploadUrl   = await generateV4UploadSignedUrl(bucketName, 'data/upload_me.txt');
     fs.readFile('./index.html', 'utf-8', async (error, data) => {
